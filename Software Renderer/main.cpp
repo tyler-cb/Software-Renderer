@@ -8,8 +8,11 @@
 
 #include "state.h"
 #include "helpers.h"
+#include "geometry/drawing.h"
+#include "geometry/geometry.h"
 
 State state;
+Frametimes frametimes;
 bool running = true;
 
 int main(int argc, int8_t argv[]) {
@@ -29,18 +32,14 @@ int main(int argc, int8_t argv[]) {
 			}
 		}
 
-		{
-			autotimer timer(&frametime);
-#pragma omp parallel for
-			for (int y = 0, i = 0; y < WINDOW_HEIGHT; y++) {
-				for (int x = 0; x < WINDOW_WIDTH; x++, i++) {
-					state.pixels[i] = 0xFF000000 | ((x ^ y) << 8);
-				}
-			}
-		}
+		draw_frame();
+		frametimes.add(state.last_frame_time);
 
 #ifdef _DEBUG
-		std::cout << "Frame time: " << frametime << "ms\n";
+		if (frametimes.frame_number % 20 == 0) {
+			std::cout << "Frame time: " << frametimes.averageMs() << "ms\n";
+			std::cout << "FPS: " << frametimes.averageFps() << "\n";
+		}
 #endif
 
 		SDL_UpdateTexture(state.texture, nullptr, state.pixels, WINDOW_WIDTH * sizeof(uint32_t));
