@@ -1,8 +1,13 @@
 #pragma once
 
 #include <cstdint>
+#include <chrono>
+#include <iostream>
+
 #include "SDL3/SDL.h"
+
 #include "state.h"
+#include "helpers.h"
 
 State state;
 bool running = true;
@@ -16,6 +21,7 @@ int main(int argc, int8_t argv[]) {
 	state.texture = SDL_CreateTexture(state.renderer,
 		SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, WINDOW_WIDTH, WINDOW_HEIGHT);
 
+	double frametime = 0.0;
 	while (running) {
 		while (SDL_PollEvent(&state.event)) {
 			if (state.event.type == SDL_EVENT_QUIT) {
@@ -23,11 +29,19 @@ int main(int argc, int8_t argv[]) {
 			}
 		}
 
-		for (int y = 0, i = 0; y < WINDOW_HEIGHT; y++) {
-			for (int x = 0; x < WINDOW_WIDTH; x++, i++) {
-				state.pixels[i] = 0xFF000000 | ((x ^ y) << 8);
+		{
+			autotimer timer(&frametime);
+#pragma omp parallel for
+			for (int y = 0, i = 0; y < WINDOW_HEIGHT; y++) {
+				for (int x = 0; x < WINDOW_WIDTH; x++, i++) {
+					state.pixels[i] = 0xFF000000 | ((x ^ y) << 8);
+				}
 			}
 		}
+
+#ifdef _DEBUG
+		std::cout << "Frame time: " << frametime << "ms\n";
+#endif
 
 		SDL_UpdateTexture(state.texture, nullptr, state.pixels, WINDOW_WIDTH * sizeof(uint32_t));
 		SDL_RenderClear(state.renderer);
