@@ -6,9 +6,10 @@
 #include <numeric>
 
 #define FRAMETIME_SAMPLES 20
+#define PI 3.1415927f
 
 // automatically times how long the timer stays in scope, and writes it to out.
-struct autotimer {
+struct Autotimer {
 	using time_point = std::chrono::time_point<std::chrono::high_resolution_clock>;
 	using clock = std::chrono::high_resolution_clock;
 	using durationMs = std::chrono::duration<double, std::milli>;
@@ -16,9 +17,9 @@ struct autotimer {
 	double* const output; // pointer itself is const
 	const time_point start;
 
-	explicit autotimer(double* out) : output(out), start(clock::now()) {}
+	explicit Autotimer(double* out) : output(out), start(clock::now()) {}
 
-	~autotimer() {
+	~Autotimer() {
 		time_point end = clock::now();
 		durationMs elapsed = end - start;
 		if (output) *output = elapsed.count();
@@ -52,3 +53,20 @@ struct Frametimes {
 		return (ms == 0.0) ? 0.0 : 1000.0 / ms;
 	}
 };
+
+struct Colour {
+	union {
+		struct {
+			uint8_t b, g, r, a;
+		};
+		uint32_t c;
+	};
+
+	Colour(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : b(b), g(g), r(r), a(a) {}
+	Colour(uint8_t r, uint8_t g, uint8_t b) : b(b), g(g), r(r), a(255) {}
+	Colour(uint32_t c) : c(c) {}
+	Colour() : b(0), g(0), r(0), a(255) {}
+};
+
+constexpr float DegToRad(float degrees) { return degrees * 3.1415927f / 180.0f; }
+constexpr float RadToDeg(float radians) { return radians * 180.0f / 3.1415927f; }

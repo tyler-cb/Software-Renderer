@@ -124,6 +124,96 @@ inline Vec<3> toCartesian(const Vec<4>& v) {
 	return Vec<3>(v.x / v.w, v.y / v.w, v.z / v.w);
 }
 
+inline Vec<2> max(const Vec<2>& a, const Vec<2>& b, const Vec<2>& c) {
+	Vec<2> v;
+	v.x = std::fmax(a.x, std::fmax(b.x, c.x));
+	v.y = std::fmax(a.y, std::fmax(b.y, c.y));
+	return v;
+}
+
+inline Vec<3> max(const Vec<3>& a, const Vec<3>& b, const Vec<3>& c) {
+	Vec<3> v;
+	v.x = std::fmax(a.x, std::fmax(b.x, c.x));
+	v.y = std::fmax(a.y, std::fmax(b.y, c.y));
+	v.z = std::fmax(a.z, std::fmax(b.z, c.z));
+	return v;
+}
+
+inline Vec<2> min(const Vec<2>& a, const Vec<2>& b, const Vec<2>& c) {
+	Vec<2> v;
+	v.x = std::fmin(a.x, std::fmin(b.x, c.x));
+	v.y = std::fmin(a.y, std::fmin(b.y, c.y));
+	return v;
+}
+
+inline Vec<3> min(const Vec<3>& a, const Vec<3>& b, const Vec<3>& c) {
+	Vec<3> v;
+	v.x = std::fmin(a.x, std::fmin(b.x, c.x));
+	v.y = std::fmin(a.y, std::fmin(b.y, c.y));
+	v.z = std::fmin(a.z, std::fmin(b.z, c.z));
+	return v;
+}
+
+// The area is signed depending on if ABC is clockwise or cc.
+// counter-clockwise = +ve, clockwise = -ve
+inline float signedTriangleArea(const Vec<2>& a, const Vec<2>& b, const Vec<2>& c) {
+	return 0.5f * ((b.y - a.y) * (b.x + a.x) + (c.y - b.y) * (c.x + b.x) + (a.y - c.y) * (a.x + c.x));
+}
+
 typedef Vec<2> Vec2;
 typedef Vec<3> Vec3;
 typedef Vec<4> Vec4;
+
+#define WORLD_FORWARD Vec3(0.0f, 0.0f, 1.0f)
+#define WORLD_UP Vec3(0.0f, 1.0f, 0.0f)
+#define WORLD_RIGHT Vec3(1.0f, 0.0f, 0.0f)
+
+template <int rows, int cols>
+struct Mat {
+	float data[rows][cols];
+
+	Mat() {
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				data[i][j] = 0.0f;
+			}
+		}
+	}
+
+	float& operator()(int row, int col) { return data[row][col]; }
+	const float& operator()(int row, int col) const { return data[row][col]; }
+};
+
+template<int rows_lhs, int cols_lhs, int cols_rhs>
+Mat<rows_lhs, cols_rhs> operator*(const Mat<rows_lhs, cols_lhs>& lhs, const Mat<cols_lhs, cols_rhs>& rhs) {
+    Mat<rows_lhs, cols_rhs> result;
+
+    for (int i = 0; i < rows_lhs; i++) {
+        for (int j = 0; j < cols_rhs; j++) {
+            float sum = 0.0f;
+            for (int k = 0; k < cols_lhs; k++) {
+                sum += lhs.data[i][k] * rhs.data[k][j];
+            }
+            result.data[i][j] = sum;
+        }
+    }
+    return result;
+}
+
+template<int n>
+Vec<n> operator*(const Mat<n, n>& matrix, const Vec<n>& vector) {
+	Vec<n> result;
+
+	for (int i = 0; i < n; i++) {
+		float sum = 0.0f;
+		for (int j = 0; j < n; j++) {
+			sum += matrix.data[i][j] * vector[j];
+		}
+		result[i] = sum;
+	}
+
+	return result;
+}
+
+typedef Mat<3, 3> Mat3;
+typedef Mat<4, 4> Mat4;

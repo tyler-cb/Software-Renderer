@@ -25,6 +25,7 @@ int main(int argc, int8_t argv[]) {
 		SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	double frametime = 0.0;
+
 	while (running) {
 		while (SDL_PollEvent(&state.event)) {
 			if (state.event.type == SDL_EVENT_QUIT) {
