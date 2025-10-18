@@ -10,6 +10,7 @@ template<>
 struct Vec<2> {
 	union {
 		struct { float x, y; };
+		struct { float u, v; };
 		float data[2];
 	};
 	float& operator[](size_t i) { assert(i < 2); return data[i]; }
@@ -229,3 +230,20 @@ Mat<n, n> transpose(const Mat<n, n> matrix) {
 
 typedef Mat<3, 3> Mat3;
 typedef Mat<4, 4> Mat4;
+
+struct Vertex {
+	Vec3 pos;
+	Vec2 uv;
+	Vec3 normal;
+};
+
+struct Triangle {
+	union {
+		struct {
+			uint32_t a;
+			uint32_t b;
+			uint32_t c;
+		};
+		uint32_t indices[3];
+	};
+};

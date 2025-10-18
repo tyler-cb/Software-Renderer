@@ -15,6 +15,8 @@ State state;
 Frametimes frametimes;
 bool running = true;
 
+static void importAllObj();
+
 int main(int argc, int8_t argv[]) {
 	SDL_Init(SDL_INIT_VIDEO);
 	state.window = SDL_CreateWindow("Software Renderer",
@@ -25,6 +27,9 @@ int main(int argc, int8_t argv[]) {
 		SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	double frametime = 0.0;
+
+	importAllObj();
+	std::cout << "Importing all objs took " << state.last_frame_time << "ms\n";
 
 	while (running) {
 		while (SDL_PollEvent(&state.event)) {
@@ -54,4 +59,9 @@ int main(int argc, int8_t argv[]) {
 	SDL_DestroyWindow(state.window);
 	SDL_Quit();
 	return 0;
+}
+
+static void importAllObj() {
+	Autotimer timer(&state.last_frame_time);
+	state.drawables.push_back(importFromObj("../TiltedCube.obj"));
 }

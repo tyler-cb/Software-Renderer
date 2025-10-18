@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /Software Renderer/SDL3.dll
 *.vcxproj
 *.vcxproj.filters
+*.obj
