@@ -40,6 +40,7 @@ struct Vec<4> {
 	const float& operator[](size_t i) const { assert(i < 4); return data[i]; }
 	Vec<4>(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 	Vec<4>() : x(0), y(0), z(0), w(1) {}
+	Vec<4>(const Vec<3>& v, float w) : x(v.x), y(v.y), z(v.z), w(w) {}
 };
 
 template<int n> 
@@ -213,6 +214,17 @@ Vec<n> operator*(const Mat<n, n>& matrix, const Vec<n>& vector) {
 	}
 
 	return result;
+}
+
+template <int n>
+Mat<n, n> transpose(const Mat<n, n> matrix) {
+	Mat<n, n> out;
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			out.data[i][j] = matrix[j][i];
+		}
+	}
 }
 
 typedef Mat<3, 3> Mat3;

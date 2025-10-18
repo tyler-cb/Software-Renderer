@@ -2,7 +2,7 @@
 
 #include "geometry.h"
 
-inline Mat3 makeRotationMatrix(float x, float y, float z) {
+inline Mat4 makeRotationMatrix(const float x, const float y, const float z) {
 	// pitch = rotation about x.
 	// yaw = rotation about y.
 	// roll = rotation about z.
@@ -15,7 +15,13 @@ inline Mat3 makeRotationMatrix(float x, float y, float z) {
 	float cosz = cosf(z);
 
 	// we will create the 3 rotation matrices for each axis and then multiply them
-	Mat3 Rx, Ry, Rz;
+	Mat4 Rx, Ry, Rz;
+
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			Rx(i, j) = Ry(i, j) = Rz(i, j) = (i == j) ? 1.0f : 0.0f;
+		}
+	}
 
 	// Rx
 	Rx(0, 0) = 1.0f; Rx(0, 1) = 0.0f;  Rx(0, 2) = 0.0f;
@@ -34,4 +40,15 @@ inline Mat3 makeRotationMatrix(float x, float y, float z) {
 
 	// ZXY order
 	return Ry * Rx * Rz;
+}
+
+inline Mat4 makeTranslationMatrix(const float x, const float y, const float z) {
+	Mat4 o;
+
+	o(0, 0) = 1.0f; o(0, 1) = 0.0f; o(0, 2) = 0.0f; o(0, 3) = x;
+	o(1, 0) = 0.0f; o(1, 1) = 1.0f; o(1, 2) = 0.0f; o(1, 3) = y;
+	o(2, 0) = 0.0f; o(2, 1) = 0.0f; o(2, 2) = 1.0f; o(2, 3) = z;
+	o(3, 0) = 0.0f; o(3, 1) = 0.0f; o(3, 2) = 0.0f; o(3, 3) = 1.0f;
+
+	return o;
 }

@@ -68,5 +68,5 @@ struct Colour {
 	Colour() : b(0), g(0), r(0), a(255) {}
 };
 
-constexpr float DegToRad(float degrees) { return degrees * 3.1415927f / 180.0f; }
-constexpr float RadToDeg(float radians) { return radians * 180.0f / 3.1415927f; }
+constexpr float DegToRad(float degrees) { return degrees * PI / 180.0f; }
+constexpr float RadToDeg(float radians) { return radians * 180.0f / PI; }
