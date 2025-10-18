@@ -1,7 +1,7 @@
 #include "drawable.h"
 
-std::tuple<int, int, int> parseFace(const std::string& face, const size_t& v_size, const size_t& vt_size, const size_t& vn_size);
-inline uint64_t makeVertexKey(const int& v, const int& vt, const int& vn) {
+std::tuple<int, int, int> parse_face(const std::string& face, const size_t& v_size, const size_t& vt_size, const size_t& vn_size);
+inline uint64_t make_vertex_key(const int& v, const int& vt, const int& vn) {
 	// make a unique key from the v, vt, vn values such that we can avoid duplicates.
 	uint64_t key = 0;
 	key |= (uint64_t(v) & 0xFFFFF);
@@ -10,7 +10,7 @@ inline uint64_t makeVertexKey(const int& v, const int& vt, const int& vn) {
 	return key;
 }
 
-Drawable importFromObj(const std::string& filepath) {
+Drawable import_from_obj(const std::string& filepath) {
 	Drawable out;
 	std::ifstream file(filepath);
 	if (!file.is_open()) {
@@ -58,7 +58,7 @@ Drawable importFromObj(const std::string& filepath) {
 			int v_index, vt_index, vn_index;
 			bool valid = true;
 			while (stream >> vertex_string) {
-				std::tie(v_index, vt_index, vn_index) = parseFace(vertex_string, positions.size(), uvs.size(), normals.size());
+				std::tie(v_index, vt_index, vn_index) = parse_face(vertex_string, positions.size(), uvs.size(), normals.size());
 
 				if (v_index <= 0 || v_index > positions.size()) {
 					valid = false;
@@ -83,7 +83,7 @@ Drawable importFromObj(const std::string& filepath) {
 					int vt_index = std::get<1>(vertex_tuple);
 					int vn_index = std::get<2>(vertex_tuple);
 
-					uint64_t key = makeVertexKey(v_index, vt_index, vn_index);
+					uint64_t key = make_vertex_key(v_index, vt_index, vn_index);
 					uint32_t index;
 
 					auto it = vertex_index_map.find(key);
@@ -118,7 +118,7 @@ Drawable importFromObj(const std::string& filepath) {
 	return out;
 }
 
-std::tuple<int, int, int> parseFace(const std::string& face, const size_t& v_size, const size_t& vt_size, const size_t& vn_size) {
+std::tuple<int, int, int> parse_face(const std::string& face, const size_t& v_size, const size_t& vt_size, const size_t& vn_size) {
 	int v = 0, vt = 0, vn = 0;
 	const char* cursor = face.c_str();
 	char* endptr = nullptr;

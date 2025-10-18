@@ -17,4 +17,4 @@ struct Drawable {
 	std::vector<Triangle> triangles = {};
 };
 
-Drawable importFromObj(const std::string& filepath);
+Drawable import_from_obj(const std::string& filepath);

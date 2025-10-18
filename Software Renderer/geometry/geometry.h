@@ -158,7 +158,7 @@ inline Vec<3> min(const Vec<3>& a, const Vec<3>& b, const Vec<3>& c) {
 
 // The area is signed depending on if ABC is clockwise or cc.
 // counter-clockwise = +ve, clockwise = -ve
-inline float signedTriangleArea(const Vec<2>& a, const Vec<2>& b, const Vec<2>& c) {
+inline float signed_triangle_area(const Vec<2>& a, const Vec<2>& b, const Vec<2>& c) {
 	return 0.5f * ((b.y - a.y) * (b.x + a.x) + (c.y - b.y) * (c.x + b.x) + (a.y - c.y) * (a.x + c.x));
 }
 

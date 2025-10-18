@@ -27,41 +27,44 @@ struct Camera {
 
 	// View transform - places the camera at the origin and rotates the world relative
 	// to the camera. The inverse of the camera's position and rotation in world space.
-	Mat4 viewMatrix; 
+	Mat4 view_matrix; 
 
 	// Projection transform -
 	// Transform the geometry based on perspective (or not if its orthographic)
-	Mat4 projectionMatrix;
+	Mat4 projection_matrix;
 
 	Camera(const Vec3& pos) : pos(pos) {
 		horizontal_fov = 2.0f * atanf(tanf(vertical_fov * 0.5f) * aspect_ratio);
-		ComputeOrientation();
+		compute_orientation();
 	}
 
-	void ComputeOrientation() {
-		Mat4 r = makeRotationMatrix(-pitch, yaw, roll);
+	void compute_orientation() {
+		Mat4 r = make_rotation_matrix(-pitch, yaw, roll);
 
 		forward = r * Vec4(WORLD_FORWARD, 0.0f);
 		right = r * Vec4(WORLD_RIGHT, 0.0f);
 		up = r * Vec4(WORLD_UP, 0.0f);
 
-		updateViewMatrix();
+		update_view_matrix();
 	}
 
-	void updateViewMatrix() {
+	void update_view_matrix() {
 		
-		viewMatrix(0, 0) = right.x; viewMatrix(0, 1) = up.x; viewMatrix(0, 2) = -forward.x;
-		viewMatrix(1, 0) = right.y; viewMatrix(1, 1) = up.y; viewMatrix(1, 2) = -forward.y;
-		viewMatrix(2, 0) = right.z; viewMatrix(2, 1) = up.z; viewMatrix(2, 2) = -forward.z;
+		view_matrix(0, 0) = right.x; view_matrix(0, 1) = up.x; view_matrix(0, 2) = -forward.x;
+		view_matrix(1, 0) = right.y; view_matrix(1, 1) = up.y; view_matrix(1, 2) = -forward.y;
+		view_matrix(2, 0) = right.z; view_matrix(2, 1) = up.z; view_matrix(2, 2) = -forward.z;
 
-		viewMatrix(0, 3) = -dot(right, Vec4(pos, 0));
-		viewMatrix(1, 3) = -dot(up, Vec4(pos, 0));
-		viewMatrix(2, 3) = dot(forward, Vec4(pos, 0));
-		viewMatrix(3, 3) = 1.0f;
+		view_matrix(0, 3) = -dot(right, Vec4(pos, 0));
+		view_matrix(1, 3) = -dot(up, Vec4(pos, 0));
+		view_matrix(2, 3) = dot(forward, Vec4(pos, 0));
+		view_matrix(3, 3) = 1.0f;
 	}
 
-	void updateProjectionMatrix() {
+	void update_projection_matrix() {
 
+	}
+
+	Vec2 project(const Vec3& coord) {
 	}
 
 };

@@ -15,7 +15,7 @@ State state;
 Frametimes frametimes;
 bool running = true;
 
-static void importAllObj();
+static void import_all_obj();
 
 int main(int argc, int8_t argv[]) {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -28,8 +28,9 @@ int main(int argc, int8_t argv[]) {
 
 	double frametime = 0.0;
 
-	importAllObj();
+	import_all_obj();
 	std::cout << "Importing all objs took " << state.last_frame_time << "ms\n";
+	state.camera.pos.z = -2.0f;
 
 	while (running) {
 		while (SDL_PollEvent(&state.event)) {
@@ -61,7 +62,7 @@ int main(int argc, int8_t argv[]) {
 	return 0;
 }
 
-static void importAllObj() {
+static void import_all_obj() {
 	Autotimer timer(&state.last_frame_time);
-	state.drawables.push_back(importFromObj("../TiltedCube.obj"));
+	state.drawables.push_back(import_from_obj("../TiltedCube.obj"));
 }

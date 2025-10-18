@@ -2,7 +2,7 @@
 
 #include "geometry.h"
 
-inline Mat4 makeRotationMatrix(const float x, const float y, const float z) {
+inline Mat4 make_rotation_matrix(const float x, const float y, const float z) {
 	// pitch = rotation about x.
 	// yaw = rotation about y.
 	// roll = rotation about z.
@@ -42,7 +42,7 @@ inline Mat4 makeRotationMatrix(const float x, const float y, const float z) {
 	return Ry * Rx * Rz;
 }
 
-inline Mat4 makeTranslationMatrix(const float x, const float y, const float z) {
+inline Mat4 make_translation_matrix(const float x, const float y, const float z) {
 	Mat4 o;
 
 	o(0, 0) = 1.0f; o(0, 1) = 0.0f; o(0, 2) = 0.0f; o(0, 3) = x;

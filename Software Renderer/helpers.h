@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iomanip>
 #include <numeric>
+#include <random>
 
 #define FRAMETIME_SAMPLES 20
 #define PI 3.1415927f
@@ -67,6 +68,18 @@ struct Colour {
 	Colour(uint32_t c) : c(c) {}
 	Colour() : b(0), g(0), r(0), a(255) {}
 };
+
+inline Colour random_colour() {
+	static std::random_device rd; 
+	static std::mt19937 gen(rd());
+	static std::uniform_int_distribution<int> dis(0, 255);
+
+	unsigned char r = static_cast<uint8_t>(dis(gen));
+	unsigned char g = static_cast<uint8_t>(dis(gen));
+	unsigned char b = static_cast<uint8_t>(dis(gen));
+
+	return Colour(r, g, b);
+}
 
 constexpr float DegToRad(float degrees) { return degrees * PI / 180.0f; }
 constexpr float RadToDeg(float radians) { return radians * 180.0f / PI; }
