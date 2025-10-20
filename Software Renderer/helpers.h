@@ -69,10 +69,9 @@ struct Colour {
 	Colour() : b(0), g(0), r(0), a(255) {}
 };
 
-inline Colour random_colour() {
-	static std::random_device rd; 
-	static std::mt19937 gen(rd());
-	static std::uniform_int_distribution<int> dis(0, 255);
+inline Colour random_colour(uint32_t seed = std::random_device{}()) {
+	 std::mt19937 gen(seed);
+	 std::uniform_int_distribution<int> dis(0, 255);
 
 	unsigned char r = static_cast<uint8_t>(dis(gen));
 	unsigned char g = static_cast<uint8_t>(dis(gen));

@@ -29,6 +29,7 @@ struct Vec<3> {
 	const float& operator[](size_t i) const { assert(i < 3); return data[i]; }
 	Vec<3>() : x(0), y(0), z(0) {}
 	Vec<3>(float x, float y, float z) : x(x), y(y), z(z) {}
+	Vec<2> XY() const { return Vec<2>(x, y); }
 };
 
 template<> 
@@ -42,6 +43,7 @@ struct Vec<4> {
 	Vec<4>(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
 	Vec<4>() : x(0), y(0), z(0), w(1) {}
 	Vec<4>(const Vec<3>& v, float w) : x(v.x), y(v.y), z(v.z), w(w) {}
+	Vec<3> XYZ() const { return Vec<3>(x, y, z); }
 };
 
 template<int n> 
@@ -58,6 +60,34 @@ Vec<n> operator-(const Vec<n>& lhs, const Vec<n>& rhs) {
 	Vec<n> out;
 	for (int i = 0; i < n; i++) {
 		out[i] = lhs[i] - rhs[i];
+	}
+	return out;
+}
+
+template<int n>
+Vec<n> operator+=( Vec<n>& lhs, const Vec<n>& rhs) {
+	Vec<n> out;
+	for (int i = 0; i < n; i++) {
+		 lhs[i] += rhs[i];
+	}
+	return out;
+}
+
+template<int n>
+Vec<n> operator-=( Vec<n>& lhs, const Vec<n>& rhs) {
+	Vec<n> out;
+	for (int i = 0; i < n; i++) {
+		lhs[i] -= rhs[i];
+	}
+	return out;
+}
+
+// unary negation
+template<int n>
+Vec<n> operator-(const Vec<n>& v) {
+	Vec<n> out;
+	for (int i = 0; i < n; i++) {
+		out[i] = -v[i];
 	}
 	return out;
 }
@@ -174,12 +204,16 @@ template <int rows, int cols>
 struct Mat {
 	float data[rows][cols];
 
-	Mat() {
+	void clear() {
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
 				data[i][j] = 0.0f;
 			}
 		}
+	}
+
+	Mat() {
+		clear();
 	}
 
 	float& operator()(int row, int col) { return data[row][col]; }

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <chrono>
 #include <iostream>
+#include <algorithm>
 
 #include "SDL3/SDL.h"
 
@@ -16,6 +17,8 @@ Frametimes frametimes;
 bool running = true;
 
 static void import_all_obj();
+void debug_depth();
+void handle_inputs();
 
 int main(int argc, int8_t argv[]) {
 	SDL_Init(SDL_INIT_VIDEO);
@@ -30,13 +33,13 @@ int main(int argc, int8_t argv[]) {
 
 	import_all_obj();
 	std::cout << "Importing all objs took " << state.last_frame_time << "ms\n";
-	state.camera.pos.z = -2.0f;
+	state.camera.pos.z = -10.0f;
+
+	state.camera.compute_orientation();
 
 	while (running) {
 		while (SDL_PollEvent(&state.event)) {
-			if (state.event.type == SDL_EVENT_QUIT) {
-				running = false;
-			}
+			handle_inputs();
 		}
 
 		draw_frame();
@@ -48,6 +51,10 @@ int main(int argc, int8_t argv[]) {
 			std::cout << "FPS: " << frametimes.averageFps() << "\n";
 		}
 #endif
+
+		if (state.debug_depth) {
+			debug_depth();
+		}
 
 		SDL_UpdateTexture(state.texture, nullptr, state.pixels, WINDOW_WIDTH * sizeof(uint32_t));
 		SDL_RenderClear(state.renderer);
@@ -64,5 +71,58 @@ int main(int argc, int8_t argv[]) {
 
 static void import_all_obj() {
 	Autotimer timer(&state.last_frame_time);
-	state.drawables.push_back(import_from_obj("../TiltedCube.obj"));
+	state.drawables.push_back(import_from_obj("../goose.obj"));
 }
+
+void handle_inputs() {
+	if (state.event.type == SDL_EVENT_QUIT) {
+		running = false;
+	}
+	if (state.event.type == SDL_EVENT_KEY_DOWN) {
+		const SDL_KeyboardEvent& ks = state.event.key;
+		switch (ks.key) {
+		case SDLK_F1:
+			state.debug_depth = !state.debug_depth;
+			state.debug_wireframe = false;
+			break;
+		case SDLK_F2:
+			state.debug_wireframe = !state.debug_wireframe;
+			state.debug_depth = false;
+			break;
+		case SDLK_W:
+			state.camera.pos -= state.camera.forward.XYZ();
+			state.camera.update_view_matrix();
+			break;
+		case SDLK_S:
+			state.camera.pos += state.camera.forward.XYZ();
+			state.camera.update_view_matrix();
+			break;
+		case SDLK_D:
+			state.camera.yaw += DegToRad(15.0f);
+			state.camera.compute_orientation();
+			break;
+		case SDLK_A:
+			state.camera.yaw -= DegToRad(15.0f);
+			state.camera.compute_orientation();
+			break;
+		}
+	}
+}
+
+void debug_depth() {
+	const int pixel_count = WINDOW_HEIGHT * WINDOW_WIDTH;
+	for (int i = 0; i < pixel_count; i++) {
+		float d = state.depth_buffer[i];
+		
+		d = std::clamp(d, 0.0f, 1.0f);
+
+		// normalize to 0-255.
+		uint8_t intensity = static_cast<uint8_t>((1.0f - d) * 255.0f);
+
+		state.pixels[i] =
+			(255u << 24) | // ARGB format
+			(intensity << 16) |
+			(intensity << 8) |
+			(intensity);
+	}
+};
