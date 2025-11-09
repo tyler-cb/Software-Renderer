@@ -105,6 +105,14 @@ void handle_inputs() {
 			state.camera.yaw -= DegToRad(15.0f);
 			state.camera.compute_orientation();
 			break;
+		case SDLK_R:
+			state.camera.pos += state.camera.up.XYZ();
+			state.camera.update_view_matrix();
+			break;
+		case SDLK_F:
+			state.camera.pos -= state.camera.up.XYZ();
+			state.camera.update_view_matrix();
+			break;
 		}
 	}
 }

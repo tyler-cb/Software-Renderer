@@ -2,6 +2,8 @@
 #include "../helpers.h"
 #include "geometry.h"
 
+#include <algorithm>
+
 inline static Vec3 ndc_to_screen(const Vec3& v) {
 	Vec3 screen;
 	screen.x = (v.x * 0.5f + 0.5f) * WINDOW_WIDTH;
@@ -35,13 +37,21 @@ void draw_triangle( const Vec3& a, const Vec3& b, const Vec3& c,
 
 	// triangles facing away from the camera will have a negative area from signed_triangle_area.
 	// therefore we can cull backside of faces like so
-	if (abc_area < 1) { return; }
+	if (abc_area < 1.0f) { return; }
+
+	// Clamp the bounding box to the screen boundries.
+	int x0 = std::max(0, static_cast<int>(std::floor(abc_min.x)));
+	int x1 = std::min(WINDOW_WIDTH, static_cast<int>(std::ceil(abc_max.x)));
+	int y0 = std::max(0, static_cast<int>(std::floor(abc_min.y)));
+	int y1 = std::min(WINDOW_HEIGHT, static_cast<int>(std::ceil(abc_max.y)));
+
+	if (x1 < x0 || y1 < y0) return;
 
 	// We compute the barycentric coordinates of every pixel in the bounding box.
 	// We can then determine if the pixel lies within the triangle.
 #pragma omp parallel for
-	for (int x = abc_min.x; x <= abc_max.x; x++) {
-		for (int y = abc_min.y; y <= abc_max.y; y++) {
+	for (int x = x0; x <= x1; x++) {
+		for (int y = y0; y <= y1; y++) {
 
 			if (x < 0 || x > WINDOW_WIDTH || y < 0 || y > WINDOW_HEIGHT) { continue; }
 
@@ -80,13 +90,21 @@ void draw_triangle(const Vec3& a, const Vec3& b, const Vec3& c, const Colour& co
 
 	// triangles facing away from the camera will have a negative area from signed_triangle_area.
 	// therefore we can cull backside of faces like so
-	if (abc_area < 1) { return; }
+	if (abc_area < 1.0f) { return; }
+
+	// Clamp the bounding box to the screen boundries.
+	int x0 = std::max(0, static_cast<int>(std::floor(abc_min.x)));
+	int x1 = std::min(WINDOW_WIDTH, static_cast<int>(std::ceil(abc_max.x)));
+	int y0 = std::max(0, static_cast<int>(std::floor(abc_min.y)));
+	int y1 = std::min(WINDOW_HEIGHT, static_cast<int>(std::ceil(abc_max.y)));
+
+	if (x1 < x0 || y1 < y0) return;
 
 	// We compute the barycentric coordinates of every pixel in the bounding box.
 	// We can then determine if the pixel lies within the triangle.
 #pragma omp parallel for
-	for (int x = abc_min.x; x <= abc_max.x; x++) {
-		for (int y = abc_min.y; y <= abc_max.y; y++) {
+	for (int x = x0; x <= x1; x++) {
+		for (int y = y0; y <= y1; y++) {
 
 			if (x < 0 || x > WINDOW_WIDTH || y < 0 || y > WINDOW_HEIGHT) { continue; }
 
