@@ -44,6 +44,15 @@ int main(int argc, int8_t argv[]) {
 			handle_inputs();
 		}
 
+		// Rotate the models each frame
+		double dt = state.last_frame_time / 1000.0; // seconds
+		const float rotation_speed = 20.0f;
+		float delta_rad = DegToRad(rotation_speed) * static_cast<float>(dt);
+		for (Drawable& d : state.drawables) {
+			d.yaw += delta_rad;
+			d.update_model_matrix();
+		}
+
 		draw_frame();
 		frametimes.add(state.last_frame_time);
 
