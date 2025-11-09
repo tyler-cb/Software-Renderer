@@ -31,6 +31,8 @@ int main(int argc, int8_t argv[]) {
 
 	double frametime = 0.0;
 
+	state.debug_texture = load_tga("../test_texture.tga");
+
 	import_all_obj();
 	std::cout << "Importing all objs took " << state.last_frame_time << "ms\n";
 	state.camera.pos.z = -10.0f;
@@ -45,12 +47,10 @@ int main(int argc, int8_t argv[]) {
 		draw_frame();
 		frametimes.add(state.last_frame_time);
 
-#ifdef _DEBUG
 		if (frametimes.frame_number % 20 == 0) {
 			std::cout << "Frame time: " << frametimes.averageMs() << "ms\n";
 			std::cout << "FPS: " << frametimes.averageFps() << "\n";
 		}
-#endif
 
 		if (state.debug_depth) {
 			debug_depth();
@@ -71,7 +71,7 @@ int main(int argc, int8_t argv[]) {
 
 static void import_all_obj() {
 	Autotimer timer(&state.last_frame_time);
-	state.drawables.push_back(import_from_obj("../goose.obj"));
+	state.drawables.push_back(import_from_obj("../coffee_table.obj"));
 }
 
 void handle_inputs() {

@@ -24,6 +24,9 @@ struct State {
 	Camera camera = Camera(Vec3(0.0f, 0.0f, 0.0f));
 	double last_frame_time;
 
+	// A texture to be used when the drawable has no texture
+	Texture debug_texture;
+
 	// when true, show the depth buffer on screen.
 	bool debug_depth = false;
 	// when true, draw wireframes rather than filled triangles.

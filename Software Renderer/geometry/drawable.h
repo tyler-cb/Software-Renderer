@@ -9,6 +9,7 @@
 
 #include "geometry.h"
 #include "transformations.h"
+#include "texture.h"
 
 struct Drawable {
 	std::string name = "";
@@ -16,6 +17,7 @@ struct Drawable {
 	float yaw = 0.0f, pitch = 0.0f, roll = 0.0f; // radians
 	std::vector<Vertex> vertices = {};
 	std::vector<Triangle> triangles = {};
+	Texture* texture = nullptr;
 
 	// translation + rotation;
 	Mat4 model_matrix;
